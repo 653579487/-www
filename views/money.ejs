@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="./css/materialize.min.css">
+    <title>账单</title>
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+
+        .y_card + .y_card {
+            margin-left: 20px;
+        }
+
+
+
+        .test_right {
+
+        }
+
+        #yybox {
+            padding: 20px;
+            overflow: hidden;
+        }
+
+    </style>
+</head>
+<body>
+<% include Header.ejs %>
+
+<div class="admin">
+    <div class="container">
+        <div class="row">
+            <!--左边-->
+            <div class="col m4 s12 test_left">
+                <div class="search">
+                    <div class="col s12">
+                        <div class="card">
+                            <div class="card-content white-text center-align  #0277bd light-blue darken-3">
+                                <p class="year_jq">2018年</p>
+                                <p>消费记录</p>
+                            </div>
+                            <div class="card-content center">
+                              <div class="row">
+                                  <div class="input-field col s4">
+                                      <select class="year">
+                                          <% for(var i=0; i<20; i++){%>
+                                              <option value=<%= 2017+ i%>><%= 2017+ i%></option>
+                                          <%}%>
+                                      </select>
+                                  </div>
+                                  <div class="input-field col s4">
+                                      <select class="month">
+                                          <option value="0">可不选</option>
+                                          <% for(var i=1; i<13; i++){%>
+                                             <option value=<%= i%>><%= i%> 月</option>
+                                          <%}%>
+                                      </select>
+                                  </div>
+                                  <div class="input-field col s4">
+                                      <select class="day">
+                                          <option value="0">可不选</option>
+                                          <% for(var i=1; i<32; i++){%>
+                                          <option value=<%= i%>><%= i%> 日</option>
+                                          <%}%>
+                                      </select>
+                                  </div>
+                              </div>
+                                <a class="waves-effect waves-light btn col s12" id="jq_base_serach">查询</a><br><br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="baseData hide-on-small-only" style="padding: 0 10px">
+                    <ul class="collection">
+                        <li class="collection-item">
+                            本年共产生消费笔数
+                            <div style="border: 1px dashed bisque; height: 1px; margin: 10px 0"></div>
+                            <div class="chip"><%= length%>笔</div>
+                        </li>
+                        <li class="collection-item">
+                            本年消费总金额
+                            <div style="border: 1px dashed bisque; height: 1px; margin: 10px 0"></div>
+                            <div class="chip">￥<%= num%></div>
+                        </li>
+                        <li class="collection-item">
+                            最大/最小一笔开支
+                            <div style="border: 1px dashed bisque; height: 1px; margin: 10px 0"></div>
+                            <div class="chip">￥<%= little%></div>
+                            <div class="chip">￥<%= max%></div>
+                        </li>
+                        <li class="collection-item">
+                            平均每笔消费
+                            <div style="border: 1px dashed bisque; height: 1px; margin: 10px 0"></div>
+                            <div class="chip">￥<%= average%></div>
+
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!--右边-->
+            <div class="col m8 s12 test_right">
+                <!--圆形图-->
+                <div class="circular_box #fafafa grey lighten-5 z-depth-4">
+                    <div id="yybox">
+                        <canvas id="myChart" width="900" height="360"></canvas>
+                    </div>
+
+                </div>
+                <!--线性图-->
+                <div class="line_box #fafafa grey lighten-5 z-depth-4" style="margin-top: 30px">
+                    <div id="lineBox" style="overflow: hidden;padding: 20px">
+                        <canvas id="myChart1" width="900" height="360"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+</body>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/materialize.min.js"></script>
+<script src="./js/Chart.bundle.js"></script>
+<script>
+    $(".button-collapse").sideNav();
+    $(document).ready(function () {
+        $('.slider').slider({full_width: true});
+    });
+    $(document).ready(function() {
+        $('select').material_select();
+    });
+    function getCountDays(input) {
+        var curDate = new Date(input);
+        /* 获取当前月份 */
+        var curMonth = curDate.getMonth();
+        /*  生成实际的月份: 由于curMonth会比实际月份小1, 故需加1 */
+        curDate.setMonth(curMonth + 1);
+        /* 将日期设置为0, 这里为什么要这样设置, 我不知道原因, 这是从网上学来的 */
+        curDate.setDate(0);
+        /* 返回当月的天数 */
+        return curDate.getDate();
+    }
+    $(".year").val(<%= year%>)
+
+
+
+
+    var vv = ['<%= gouwu%>', '<%= chifan%>', '<%= jiaotong%>','<%= renqing%>','<%= tongxin%>']
+    var Data = {
+        labels: ["1", "2", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"],
+        datasets: [
+            {
+                label: '<%= month%>月消费一览表',
+                data: [<%= baseday%>],
+                fill: 0,
+                borderColor: '#009A63',
+                pointHoverBackgroundColor: 'red',
+            }
+        ]
+    }
+    var data = {
+        datasets: [{
+            data: vv,
+            borderColor: ['#0f0', '#f0f', '#ff0','#f00','#00f'],
+            backgroundColor: ['#0f0', '#f0f', '#ff0','#f00','#00f']
+        }],
+
+        // 这些标签出现在图例和工具提示中时，悬停不同的弧线
+        labels: [
+            '购物',
+            '吃饭',
+            '交通',
+            '人情',
+            '通信'
+        ]
+    };
+    var ctx = document.getElementById("myChart").getContext("2d");
+    MYC = new Chart(ctx, {
+        type: 'pie',
+        data: data
+    });
+
+    var ctx1 = document.getElementById("myChart1").getContext("2d");
+    MYL = new Chart(ctx1, {
+        type: 'line',
+        data: Data
+    });
+
+    var year = 2018;
+    $.get('/money/search',{year:year},function (result) {
+        if(result.err == '0'){
+            Data.labels = ["1月", "2月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+            Data.datasets[0].label = ''+year+'年消费一览表';
+            Data.datasets[0].data = result.Array;
+        }
+        data.datasets[0].data = result.result;
+        MYL.update()
+        MYC.update()
+    })
+
+    $('#jq_base_serach').on('click',function () {
+        var year = $(".year").find("option:selected").text();
+
+        $('.year_jq').text(year+'年')
+        var month = $(".month").find("option:selected").val() >=10 ? $(".month").find("option:selected").val() : '0'+ $(".month").find("option:selected").val();
+
+        var day = $(".day").find("option:selected").val()>=10 ? $(".day").find("option:selected").val(): '0'+ $(".day").find("option:selected").val();
+
+        if(month == '00'){
+            $.get('/money/search',{year:year},function (result) {
+                if(result.err == '0'){
+                    Data.labels = ["1月", "2月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
+                    Data.datasets[0].label = ''+year+'年消费一览表';
+                    Data.datasets[0].data = result.Array;
+                }
+                data.datasets[0].data = result.result;
+                MYL.update()
+                MYC.update()
+            })
+            return
+
+        }
+        if(day == '00'){
+            var allday = getCountDays(''+year+'/'+month+'')
+            var days = [];
+            for(var i = 1; i<= allday; i++){
+                days.push(''+i+'')
+            }
+            $.get('/money/search',{year:year,month:month},function (result) {
+                if(result.err == '0'){
+                    Data.labels = days;
+                    Data.datasets[0].label = ''+month+'月消费一览表';
+                    Data.datasets[0].data = result.Array;
+                }
+                data.datasets[0].data = result.result;
+                MYL.update()
+                MYC.update()
+            })
+            return
+        }
+        $.get('/money/search',{year:year,month:month,day:day},function (result) {
+            console.log(result.result)
+            if(result.err == '0'){
+
+                Data.labels = ["吃饭", "购物", "交通", "人情", "通信"];
+                Data.datasets[0].label = ''+month+'月'+day+'日消费一览表';
+                Data.datasets[0].data = result.result;
+            }
+            data.datasets[0].data = result.result;
+            MYL.update()
+            MYC.update()
+        })
+
+    })
+
+
+
+
+
+</script>
+</html>

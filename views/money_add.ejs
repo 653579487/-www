@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/materialize.min.css">
+    <title>明细</title>
+    <style></style>
+</head>
+<body>
+    <% include Header.ejs %>
+    <div class="container">
+        <div class="container">
+            <div class="row">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="date" placeholder='<%= year%>/<%= month%>/<%=day%>' name="date" type="date" class="datepicker" value='<%= year%>/<%= month%>/<%=day%>' >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <input id="howMoney" type="text" name="Money" placeholder="how?">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <select id="select">
+                                <option value="" disabled selected>选择用途</option>
+                                <option value="购物">购物</option>
+                                <option value="吃饭">吃饭</option>
+                                <option value="交通">交通</option>
+                                <option value="人情">人情</option>
+                                <option value="通信">通信</option>
+                            </select>
+                            <label>用途</label>
+                        </div>
+                    </div>
+               <div class="center">
+                   <a class="waves-effect waves-light btn" id="jq_submit">提交</a>
+               </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</body>
+<script src="/js/jquery.js"></script>
+<script src="/js/materialize.min.js"></script>
+<script>
+    $('.datepicker').pickadate({
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 15,// Creates a dropdown of 15 years to control year
+        format: 'yyyy/mm/dd',
+        weekdaysLetter: ['日', '一', '二', '三', '四', '五', '六'],
+        today: '今天',
+        clear: '清除',
+        close: '关闭',
+        monthsFull: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+        monthsShort: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+        weekdaysFull: ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
+    });
+    $(document).ready(function() {
+        $('select').material_select();
+    });
+
+
+
+    $('#jq_submit').on('click',function () {
+       $(this).addClass('disabled')
+        $.post('/money/DoAddmoneyBase',{
+            date:$('#date').val(),
+            howMoney:$('#howMoney').val(),
+            guess:$('#select').val()
+        },function (result) {
+            if(result.err == '1'){
+                Materialize.toast(result.msg, 4000)
+                return
+            }
+            if(result.err =='0'){
+                Materialize.toast(result.msg, 4000)
+                $('#jq_submit').removeClass('disabled')
+            }
+
+
+
+        })
+
+    })
+
+</script>
+</html>

@@ -1,0 +1,30 @@
+<nav style="padding: 0 20px" class="#263238 blue-grey darken-4">
+    <div class="nav-wrapper">
+        <a href="/" class="brand-logo">YANYE</a>
+        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+            <% if(login && money){%>
+            <li><a href="/money/addmoneyBase">添加明细</a></li>
+            <li id="Header_name" data-name =<%= username%>  data-user-id='<%= %>'><a href="#">欢迎你 : <%= username%></a></li>
+            <li><a href="/logout">退出登录</a></li>
+            <%}else if(login){%>
+            <li><a href="/blog/add">发表文章</a></li>
+            <li id="Header_name" data-name =<%= username%>><a href="#">欢迎你 : <%= username%></a></li>
+            <li><a href="/logout">退出登录</a></li>
+            <%}else{%>
+            <li><a href="/regi">注册</a></li>
+            <li><a href="/login">登录</a></li>
+            <%}%>%>
+        </ul>
+        <ul class="side-nav" id="mobile-demo">
+            <% if(login){ %>
+            <li><a href="/blog/add">发表文章</a></li>
+            <li><a href="#">欢迎你 : <%= username%></a></li>
+            <li><a href="/logout">退出登录</a></li>
+            <%}else{%>
+            <li><a href="/regi">注册</a></li>
+            <li><a href="/login">登录</a></li>
+            <%}%>
+        </ul>
+    </div>
+</nav>

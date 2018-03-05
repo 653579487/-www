@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="../css/materialize.min.css">
+    <title>电影</title>
+    <style>
+
+
+        #y_card-action > a{
+            margin: 0;
+            margin-right: 3px;
+        }
+        small{
+            margin: 5px 0;
+            font-size: 15px;
+        }
+        .y_nav_ul li{
+            float: left;
+            margin-left: 30px;
+        }
+        .y_nav_ul li a{
+            display: inline-block;
+            padding: 15px;
+            color: black;
+        }
+        #y_card-action .y_movie_samlltext a{
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        .preloader-wrapper{
+             left: 50%;
+             position: absolute;
+             top: 50%;
+        }
+        .y_a_active{
+            background: palevioletred;
+        }
+        .loding{
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+           background: rgba(0,0,0,0.6);
+            display: none;
+        }
+      .card-image .average{
+          position: absolute;
+          right: 50%;
+          transform: translateX(50%);
+          bottom: 0px;
+          background: white;
+          padding: 0 13px;
+          width: 100px;
+          overflow: hidden;
+       }
+
+    </style>
+</head>
+<body>
+<%include Header.ejs%>
+
+<div class="container">
+    <div class="row">
+        <nav>
+            <div class="nav-wrapper #eceff1 blue-grey lighten-5">
+                <form>
+                    <div class="input-field">
+                        <input id="search" type="search" required>
+                        <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                        <i class="material-icons">close</i>
+                    </div>
+                </form>
+            </div>
+        </nav>
+
+        <ul class="y_nav_ul">
+            <li class="tab hoverable"><a href="/movie/in_theaters" target="_self" <% if(body.title == '正在上映的电影-北京'){%> class="y_a_active" <%}%> >正在上映</a></li>
+            <li class="tab hoverable"><a href="/movie/coming_soon" target="_self" <% if(body.title == '即将上映的电影'){%> class="y_a_active" <%}%> >即将上映</a></li>
+            <li class="tab hoverable"><a href="/movie/Top250" target="_self"<% if(body.title == '豆瓣电影Top250'){%> class="y_a_active" <%}%> >Top250</a></li>
+        </ul>
+
+        <div id="test1" class="col s12 li_box">
+            <p><%= body.title%></p>
+                <div class="row">
+                    <% body.subjects.forEach(function (item) {%>
+                    <div class="col s6 m3 l2 ">
+                        <div class="card">
+                            <a target="_blank" href=<%= item.alt%>>
+                                <div class="card-image">
+                                    <img height="250px" src=<%= item.images.small%>>
+                                    <span class="average blue-grey-text">得分：<%= item.rating.average%></span>
+                                </div>
+                            </a>
+                            <div class="card-content">
+                                <p class="truncate"><%= item.title%></p>
+                            </div>
+                            <div class="card-action truncate" id="y_card-action">
+                                <small class="blue-grey-text">年份：<%= item.year%></small><br>
+                                  <span class="y_movie_samlltext ">
+                                      <% item.casts.forEach(function (item1) {%>
+                                      <a href=<%= item1.alt%>><%= item1.name%></a>
+                                      <%})%>
+                                  </span>
+                            </div>
+                        </div>
+                    </div>
+                    <%})%>
+                </div>
+        </div>
+
+        <div class="loding">
+            <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue">
+                    <div class="circle-clipper left">
+                        <div class="circle"></div>
+                    </div><div class="gap-patch">
+                        <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+</div>
+</div>
+</body>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/materialize.min.js"></script>
+<script>
+    $(".button-collapse").sideNav();
+    $(document).ready(function(){
+        $('.slider').slider({full_width: true});
+    });
+    $('.y_nav_ul').on('click','li',function () {
+       $('.loding').show()
+    })
+
+
+
+
+</script>
+</html>
